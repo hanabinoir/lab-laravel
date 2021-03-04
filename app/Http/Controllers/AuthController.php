@@ -11,6 +11,12 @@ use Laravel\Passport\Bridge\AccessToken;
 
 class AuthController extends RestController
 {
+    /**
+     * @bodyParam username string
+     * @bodyParam email string
+     * @bodyParam password string
+     * @bodyParam r_password string Repeat the password
+     */
     public function signup(Request $request)
     {
         Validator::make($request->all(), [
@@ -27,6 +33,10 @@ class AuthController extends RestController
         ]);
     }
 
+    /**
+     * @bodyParam email string
+     * @bodyParam password string
+     */
     public function login(Request $request)
     {
         if (Auth::attempt($request->all())) {
