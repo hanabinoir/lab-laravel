@@ -31,67 +31,58 @@ class GameController extends RestController
         Validator::make($request->all(), [
             'asin' => ['required', 'string', 'max:10', 'min:10'],
             'title' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'between:2.99,200.00', 'regex:/^(\d+(,\d{1,2})?)?$/']
+            'price' => ['required', 'between:2.99,200.00', 'regex:/^\d{1,3}(\.\d{1,2})?$/']
         ])->validate();
 
-        $game = Game::create($request->all());
+        $game = Game::firstOrCreate($request->all());
+
         return $this->response($game);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $game = Game::where('asin', $id);
-        return is_null($game)
-        ? $this->error('Game not found')
-        : $this->response($game->get());
+        $game = Game::where('asin', '=', $id)->firstOrFail();
+        return $this->response($game);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  string $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $game = Game::where('asin', $id);
-        if (is_null($game)) {
-            return $this->error('Game not found');
-        } else {
-            Validator::make($request->all(), [
-                'title' => ['required', 'string', 'max:255'],
-                'price' => ['required', 'between:2.99,200.00', 'regex:/^(\d+(,\d{1,2})?)?$/']
-            ])->validate();
+        $game = Game::where('asin', '=', $id)->firstOrFail();
+        Validator::make($request->all(), [
+            'title' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'between:2.99,200.00', 'regex:/^\d{1,3}(\.\d{1,2})?$/']
+        ])->validate();
 
-            $game->title = $request->title;
-            $game->price = $request->price;
-            $game->save();
+        $game->title = $request->title;
+        $game->price = $request->price;
+        $game->save();
 
-            return $this->response($game);
-        }
+        return $this->response($game);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  string  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $game = Game::where('asin', $id);
-        if (is_null($game)) {
-            return $this->error('Game not found');
-        } else {
-            $game->delete();
-            return $this->response('Game deleted: {$id}.');
-        }
+        $game = Game::where('asin', '=', $id)->firstOrFail();
+        $game->delete();
+        return $this->response("Game deleted: {$id}.");
     }
 }

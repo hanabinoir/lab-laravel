@@ -28,6 +28,6 @@ class RestController extends Controller
             $res['data'] = $msgs;
         }
 
-        return response()->json($response, $code);
+        return response()->json($res, $code);
     }
 }

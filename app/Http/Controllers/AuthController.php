@@ -31,7 +31,7 @@ class AuthController extends RestController
     {
         if (Auth::attempt($request->all())) {
             $user = Auth::user();
-            $data['token'] = $user->createToken('Lab')->accessToken;
+            $data['token'] = $user->createToken('Bearer')->accessToken;
             $data['username'] = $user['name'];
             return $this->response($data, '');
         } else {
