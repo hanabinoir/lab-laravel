@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameResource;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,7 @@ class GameController extends RestController
     public function index()
     {
         $games = Game::all();
-        $data = empty($games) ? [] : $games;
+        $data = empty($games) ? [] : GameResource::collection($games);
         return $this->response($data);
     }
 
@@ -36,7 +37,7 @@ class GameController extends RestController
 
         $game = Game::firstOrCreate($request->all());
 
-        return $this->response($game);
+        return $this->response(new GameResource($game));
     }
 
     /**
@@ -48,7 +49,7 @@ class GameController extends RestController
     public function show($id)
     {
         $game = Game::where('asin', '=', $id)->firstOrFail();
-        return $this->response($game);
+        return $this->response(new GameResource($game));
     }
 
     /**
@@ -70,7 +71,7 @@ class GameController extends RestController
         $game->price = $request->price;
         $game->save();
 
-        return $this->response($game);
+        return $this->response(new GameResource($game));
     }
 
     /**

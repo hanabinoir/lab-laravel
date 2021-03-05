@@ -14,4 +14,5 @@ class Game extends Model
     ];
 
     protected $primaryKey = 'asin';
+    protected $keyType = 'string';
 }
