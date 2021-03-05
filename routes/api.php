@@ -27,5 +27,5 @@ Route::middleware('auth:api')->group(function() {
     Route::post('/logout', function (Request $request) {
         $request->user()->token()->revoke();
     });
-    Route::resource('games', GameController::class);
+    Route::resource('games', GameController::class, ['except' => ['index', 'show']]);
 });
