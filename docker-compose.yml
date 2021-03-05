@@ -27,7 +27,7 @@ services:
     build:
       context: ./docker/php
     ports:
-      - 80:80
+      - 8000:8000
     privileged: true
     volumes:
       - "./:/var/www/html"
