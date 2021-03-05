@@ -1,62 +1,196 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# 説明
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
 
-## About Laravel
+## 概要
+<table>
+	<tbody>
+		<tr>
+			<th>バージョン</th>
+			<td>Laravel 8</td>
+		</tr>
+		<tr>
+			<th>形式</th>
+			<td>REST API</td>
+		</tr>
+		<tr>
+			<th>認証ツール</th>
+			<td>passport</td>
+		</tr>
+		<tr>
+			<th>テストツール</th>
+			<td>Postman</td>
+		</tr>
+		<tr>
+			<th>Docs</th>
+			<td>Scribe 2</td>
+		</tr>
+	</tbody>
+</table>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### AWSアクセス
+__endpoint:__ http://18.177.202.240:8000/api
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+__docs:__ http://18.177.202.240:8000/docs
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## APIについて
 
-## Learning Laravel
+#### 使用中のAPI一覧
+| Method    | URI                                     | Name                              | Action                                                                    | Middleware |
+|-----------|-----------------------------------------|-----------------------------------|---------------------------------------------------------------------------|------------|
+| GET|HEAD  | /                                       |                                   | Closure                                                                   | web        |
+| GET|HEAD  | api/games                               | games.index                       | App\Http\Controllers\GameController@index                                 | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| POST      | api/games                               | games.store                       | App\Http\Controllers\GameController@store                                 | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| GET|HEAD  | api/games/{game}                        | games.show                        | App\Http\Controllers\GameController@show                                  | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| PUT|PATCH | api/games/{game}                        | games.update                      | App\Http\Controllers\GameController@update                                | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| DELETE    | api/games/{game}                        | games.destroy                     | App\Http\Controllers\GameController@destroy                               | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| GET|HEAD  | api/games/{id}                          |                                   | App\Http\Controllers\GameController@show                                  | api        |
+| POST      | api/login                               |                                   | App\Http\Controllers\AuthController@login                                 | api        |
+| POST      | api/logout                              |                                   | Closure                                                                   | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
+| POST      | api/signup                              |                                   | App\Http\Controllers\AuthController@signup                                | api        |
+| GET|HEAD  | api/user                                |                                   | Closure                                                                   | api        |
+|           |                                         |                                   |                                                                           | auth:api   |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+#### ※注意
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Middleware は ```auth:api``` である場合、Authorization は ```Bearer Auth``` に token の設定が必要です。
 
-## Laravel Sponsors
+HEADER設定
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```
+Accept: application/json
+```
 
-### Premium Partners
+返信はOKの場合、一部共通の内容は下記通りです。
+```
+{
+    "success": true,
+    "data": ...,
+    "msg": ""
+}
+```
+実用例には```data```の中身だけを記入します。
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/)**
-- **[OP.GG](https://op.gg)**
+#### 認証の実用例
+__登録：__ api/signup
+送信：
+```
+{
+    "username": "lorem_ipsum",
+    "email": "lorem@ipsum.com",
+    "password": "******",
+    "r_password": "******"
+}
+```
+返信：201 Created, 共通内容と違う
+```
+{
+    "name": "lorem_ipsum",
+    "email": "lorem@ipsum.com",
+    "updated_at": "2021-03-05T00:30:27.000000Z",
+    "created_at": "2021-03-05T00:30:27.000000Z",
+    "id": 3
+}
+```
 
-## Contributing
+__ログイン：__ api/login
+送信：
+```
+{
+    "email": "example@email.com",
+    "password": "******"
+}
+```
+返信：
+```
+{
+    "token": "...",
+    "username": "hanabinoir"
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+__ログアウト：__ api/logout
+送信：token 以外は必要なし
+返信：200 OK で内容はなし
 
-## Code of Conduct
+#### CRUD
+__全表示：__ games.index
+送信：api/games
+返信：
+```
+[
+    ...,
+    {
+        "asin": "B07L2YXZZM",
+        "title": "戦国無双4",
+        "price": 24.51,
+        "created_at": "2021-03-05T00:43:23.000000Z",
+        "updated_at": "2021-03-05T00:52:56.000000Z"
+    },
+    ...
+]
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+__表示：__ games.show
+送信：api/games/B08NJXN756
+返信：
+```
+{
+    "asin": B08NJXN756,
+    "title": "仁王2 Complete Edition",
+    "price": 52.18,
+    "created_at": "2021-03-05T00:38:38.000000Z",
+    "updated_at": "2021-03-05T00:38:38.000000Z"
+}
+```
 
-## Security Vulnerabilities
+__追加：__ games.store
+送信：
+```
+{
+    "asin": "B08NJXN756",
+    "title": "仁王2 Complete Edition",
+    "price": 52.18
+}
+```
+返信：
+```
+{
+    "asin": B08NJXN756,
+    "title": "仁王2 Complete Edition",
+    "price": 52.18,
+    "updated_at": "2021-03-05T00:38:38.000000Z",
+    "created_at": "2021-03-05T00:38:38.000000Z"
+}
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+__更新：__ games.update
+送信：api/games/B07L2YXZZM
+```
+{
+    "title": "戦国無双4",
+    "price": 24.51
+}
+```
+返信：
+```
+{
+    "asin": "B07L2YXZZM",
+    "title": "戦国無双4",
+    "price": 24.51,
+    "created_at": "2021-03-05T00:43:23.000000Z",
+    "updated_at": "2021-03-05T00:52:56.000000Z"
+}
+```
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+__削除：__ games.destroy
+送信：api/games/B123456789
+返信：
+```
+"Game deleted: B123456789."
+```
